@@ -1,8 +1,8 @@
-type AudioClockCallback = (time: number) => void;
+import Synth from "./synth";
 
 export class AudioClock {
   readonly ctx = new AudioContext();
-  private callback: AudioClockCallback | undefined;
+  private instruments: Synth[] = [];
   private _duration;
   private intervalID: number | undefined;
   private tick = 0;
@@ -26,19 +26,15 @@ export class AudioClock {
     // callback as long as we're inside the lookahead
     while (this.phase < lookahead) {
       this.phase = Math.round(this.phase * this.precision) / this.precision;
-      this.phase >= t && this.callback?.(this.phase);
+      this.phase >= t &&
+        this.instruments.forEach((inst) => inst.play(this.phase));
       this.phase += this._duration; // increment phase by duration
       this.tick++;
     }
   }
 
-  public start(cb: AudioClockCallback, d?: number, i?: number, o?: number) {
+  public start() {
     if (!this.paused) return;
-
-    this.callback = cb;
-    if (d) this._duration = d;
-    if (i) this.interval = i;
-    if (o) this.overlap = o;
 
     this.onTick();
     this.intervalID = setInterval(this.onTick.bind(this), this.interval * 1000);
@@ -56,12 +52,19 @@ export class AudioClock {
     this.pause();
   }
 
-  public setCallback(cb: AudioClockCallback) {
-    this.callback = cb;
-  }
-
   public setDuration(setter: (n: number) => number) {
     this._duration = setter(this._duration);
+  }
+
+  public addInstruments(inst: Synth, replace = false) {
+    if (replace) this.instruments = [inst];
+    else this.instruments.push(inst);
+  }
+
+  public synth() {
+    const synth = new Synth(this);
+    this.addInstruments(synth);
+    return synth;
   }
 
   get duration() {
