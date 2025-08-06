@@ -1,4 +1,4 @@
-function euclid(pulses: number, steps: number) {
+function euclid(pulses: number, steps: number, rotation = 0) {
   if (pulses < 0 || steps < 0 || steps < pulses) {
     return [];
   }
@@ -39,6 +39,12 @@ function euclid(pulses: number, steps: number) {
 
   // Build the final array
   const pattern: number[] = [...first.flat(), ...second.flat()];
+
+  if (rotation !== 0) {
+    const len = pattern.length;
+    const offset = ((rotation % len) + len) % len; // Normalize rotation
+    return [...pattern.slice(offset), ...pattern.slice(0, offset)];
+  }
 
   return pattern;
 }
