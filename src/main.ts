@@ -10,7 +10,8 @@ const on = (event: string, id: string, callback: () => void) =>
 const foo = new Synth(clock)
   .note([261.63, 329.63, 392.0, 493.88])
   .sound("sine")
-  .euclid(5, 8);
+  .euclid(5, 8, -1)
+  .fast(2);
 
 const playSynth = (s: OscillatorType) => {
   const cb = (t: number) => foo.sound(s).play(t);

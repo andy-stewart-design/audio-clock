@@ -7,7 +7,6 @@ class Synth {
   private duration: number;
   private notes: number[] = [261.63];
   private noteOffsets: number | number[] = 0;
-  private pattern: number[] | null = null;
   private waveform: OscillatorType = "sine";
   private adsr = { attack: 0.01, decay: 0.2, sustain: 0.0, release: 0.1 };
 
@@ -37,27 +36,23 @@ class Synth {
     return this;
   }
 
-  public euclid(pulses: number, steps: number) {
-    // TODO: get rid of pattern variable and use offset instead
-    this.pattern = euclid(pulses, steps);
+  public euclid(pulses: number, steps: number, rotation = 0) {
+    const pattern = euclid(pulses, steps, rotation);
     const totalNotes = steps;
     this.noteOffsets = this.duration / totalNotes;
 
-    // Expand or loop notes if needed
-    this.notes = Array.from(
-      { length: steps },
-      (_, i) => this.notes[i % this.notes.length]
-    );
-
-    console.log(`Euclidean pattern:`, this.pattern, this.notes);
+    let noteIndex = 0;
+    this.notes = pattern.map((p) => {
+      return p === 0 ? 0 : this.notes[noteIndex++ % this.notes.length];
+    });
 
     return this;
   }
 
   public play(time: number) {
     this.notes?.forEach((frequency, i) => {
-      const { ctx, duration, waveform, noteOffsets, adsr, pattern } = this;
-      if (pattern && pattern[i % pattern.length] === 0) return; // Skip silent step
+      if (frequency === 0) return; // Skip silent notes
+      const { ctx, duration, waveform, noteOffsets, adsr } = this;
       const offset = Array.isArray(noteOffsets) ? noteOffsets[i] : noteOffsets;
       const t = time + offset * i;
       const totalVoices = 1.5;
