@@ -4,30 +4,126 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-    <style>
-      html {
-        color-scheme: dark;
-      }
-
-      button {
-        background: #666;
-        border: none;
-        border-radius: 0.25rem;
-        padding: 0.375rem 0.5rem;
-      }
-    </style>
+    <title>Drome REPL</title>
   </head>
   <body>
-    <!-- <div id="app"></div> -->
-    <button id="sine-wave">Sine wave</button>
-    <button id="tri-wave">Triangle wave</button>
-    <button id="saw-wave">Sawtooth wave</button>
-    <button id="square-wave">Square wave</button>
-    <button id="pause-cycle">pause</button>
-    <button id="stop-cycle">stop</button>
-    <button id="slower-cycle">slower</button>
-    <button id="faster-cycle">faster</button>
+    <div class="header">
+      <div class="title">🎵 Drome REPL</div>
+      <div class="controls">
+        <div class="status">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Stopped</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="repl-section">
+        <div class="section-header">
+          Code Editor
+          <div class="editor-controls">
+            <button
+              id="play"
+              class="small-btn play"
+              title="Run & Play (Ctrl+Enter)"
+            >
+              ▶ Play
+            </button>
+            <button id="stop" class="small-btn stop" title="Stop All">
+              ⏹ Stop
+            </button>
+          </div>
+        </div>
+        <textarea
+          class="code-editor"
+          id="codeEditor"
+          spellcheck="false"
+          placeholder="Write your code here...
+
+Examples:
+// Create a simple pattern
+drome.synth().note([60, 64, 67]).euclid(5, 8)
+
+// Add a bass line
+drome.synth('sawtooth').note([36, 0, 43, 0])
+
+// Then click Play to start the loop!"
+        ></textarea>
+        <div class="section-header">Output</div>
+        <div class="output" id="output"></div>
+      </div>
+
+      <div class="examples-section">
+        <div class="section-header">Examples</div>
+        <div class="examples">
+          <div class="example">
+            <div class="example-title">🎹 Simple Note</div>
+            <div class="example-code">drome.synth().note(60)</div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">🎼 Chord Pattern</div>
+            <div class="example-code">
+              drome.synth().note([60, 64, 67]).euclid(3, 8)
+            </div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">🌊 Bass Line</div>
+            <div class="example-code">
+              drome.synth("triangle").note([60, 64, 67]).euclid(5,8)
+              drome.synth("sawtooth").note([48,52,45]).euclid(3,4).lpf(400)
+            </div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">⚡ Lead Melody</div>
+            <div class="example-code">
+              drome.synth("square").note([72, 74, 76, 77]).fast(2)
+            </div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">🥁 Kick Pattern</div>
+            <div class="example-code">
+              drome.synth("square").note(36).euclid(4, 16)
+            </div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">🎵 Arpeggio</div>
+            <div class="example-code">
+              drome.synth().note([60, 64, 67, 72]).fast(4)
+            </div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">🎪 Full Track</div>
+            <div class="example-code">
+              // Bass drome.synth("sawtooth").note([36, 0, 43, 0]) // Chords
+              drome.synth().note([60, 64, 67]).euclid(3, 8) // Lead
+              drome.synth("square").note([84, 86, 88]).fast(3)
+            </div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">🔧 Tempo Control</div>
+            <div class="example-code">
+              // Slow down drome.setDuration(d => d * 2) // Speed up
+              drome.setDuration(d => d * 0.5)
+            </div>
+          </div>
+
+          <div class="example">
+            <div class="example-title">🎛️ Clear & Reset</div>
+            <div class="example-code">
+              // Clear all instruments drome.instruments = [] // Reset to
+              default tempo drome.setDuration(d => 0.5)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

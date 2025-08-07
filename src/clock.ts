@@ -1,5 +1,7 @@
 import Synth from "./synth";
 
+type IterationCallback = (n: number) => void;
+
 export class AudioClock {
   readonly ctx = new AudioContext();
   private instruments: Synth[] = [];
@@ -11,6 +13,7 @@ export class AudioClock {
   private minLatency = 0.01;
   private interval = 0.1;
   private overlap = 0.05;
+  private iterationCallbacks: IterationCallback[] = [];
   public paused = true;
 
   constructor(duration: number = 0.5) {
@@ -30,7 +33,7 @@ export class AudioClock {
         this.instruments.forEach((inst) => inst.play(this.phase));
       this.phase += this._duration; // increment phase by duration
       this.tick++;
-      console.log(`Starting iteration ${this.tick}`);
+      this.iterationCallbacks.forEach((cb) => cb(this.tick));
     }
   }
 
@@ -57,9 +60,22 @@ export class AudioClock {
     this._duration = setter(this._duration);
   }
 
+  public setBpm(bpm: number) {
+    if (bpm <= 0) return;
+    this._duration = (60 / bpm) * 4;
+  }
+
   public addInstruments(inst: Synth, replace = false) {
     if (replace) this.instruments = [inst];
     else this.instruments.push(inst);
+  }
+
+  public clearInstruments() {
+    this.instruments = [];
+  }
+
+  public onIterationStart(cb: (n: number) => void) {
+    this.iterationCallbacks.push(cb);
   }
 
   public synth(type: OscillatorType = "sine") {
