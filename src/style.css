@@ -1,0 +1,246 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #e0e6ed;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(45deg, #4facfe, #00f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn.danger {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+}
+
+.container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.repl-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.examples-section {
+  width: 350px;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.section-header {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editor-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.small-btn {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border: none;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.small-btn:hover {
+  transform: translateY(-1px);
+}
+
+.small-btn.play {
+  background: linear-gradient(45deg, #00c851, #007e33);
+}
+
+.small-btn.stop {
+  background: linear-gradient(45deg, #ff4444, #cc0000);
+}
+
+.code-editor {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  color: #e0e6ed;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 1rem;
+  outline: none;
+  resize: none;
+  line-height: 1.5;
+}
+
+.code-editor::placeholder {
+  color: rgba(224, 230, 237, 0.4);
+}
+
+.output {
+  height: 200px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  overflow-y: auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.examples {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.example {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.example:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(74, 172, 254, 0.5);
+  transform: translateY(-2px);
+}
+
+.example-title {
+  font-weight: bold;
+  color: #4facfe;
+  margin-bottom: 0.5rem;
+}
+
+.example-code {
+  font-size: 0.85rem;
+  color: #a8b5c8;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.log-entry {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.log-input {
+  color: #4facfe;
+}
+
+.log-output {
+  color: #98fb98;
+}
+
+.log-error {
+  color: #ff6b6b;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff6b6b;
+}
+
+.status-dot.playing {
+  background: #98fb98;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
