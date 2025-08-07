@@ -25,7 +25,7 @@ function initializeREPL() {
   });
 
   drome.onIterationStart((n: number) => {
-    log(`Staring iteration ${n}`);
+    log(`♻️ Staring iteration ${n}`);
   });
 
   // Initialize
