@@ -5,6 +5,12 @@ interface ADSRParams {
   release: number;
 }
 
+interface FilterParams {
+  type: BiquadFilterType;
+  frequency: number;
+  Q?: number;
+}
+
 interface BeepOptions {
   ctx: AudioContext;
   time: number;
@@ -13,6 +19,7 @@ interface BeepOptions {
   duration?: number;
   adsr?: ADSRParams;
   totalVoices?: number;
+  filter?: FilterParams;
 }
 
 const defaultAdsr = {
@@ -30,11 +37,23 @@ function beep({
   duration = 0.5,
   adsr = defaultAdsr,
   totalVoices = 1,
+  filter,
 }: BeepOptions) {
   const t = time + 0.01;
 
   const o = ctx.createOscillator();
   const g = ctx.createGain();
+
+  // Create filter if specified
+  const f = filter ? ctx.createBiquadFilter() : null;
+
+  if (f && filter) {
+    f.type = filter.type;
+    f.frequency.value = filter.frequency;
+    if (filter.Q !== undefined) {
+      f.Q.value = filter.Q;
+    }
+  }
 
   o.frequency.value = freq;
   o.type = waveform;
@@ -94,7 +113,16 @@ function beep({
     g.gain.linearRampToValueAtTime(0, releaseEnd);
   }
 
-  o.connect(g);
+  // Connect the audio chain
+  if (f) {
+    // oscillator -> filter -> gain -> destination
+    o.connect(f);
+    f.connect(g);
+  } else {
+    // oscillator -> gain -> destination
+    o.connect(g);
+  }
+
   g.connect(ctx.destination);
 }
 

@@ -10,6 +10,9 @@ class Synth {
   private noteOffsets: number | number[] = 0;
   private waveform: OscillatorType = "sine";
   private adsr = { attack: 0.01, decay: 0.2, sustain: 0.0, release: 0.1 };
+  private filterType: BiquadFilterType | null = null;
+  private filterFreq: number | null = null;
+  private filterQ: number = 1;
 
   constructor(clock: AudioClock, type: OscillatorType = "sine") {
     this.ctx = clock.ctx;
@@ -26,6 +29,20 @@ class Synth {
 
   public sound(s: OscillatorType) {
     this.waveform = s;
+    return this;
+  }
+
+  public hpf(frequency: number, q: number = 1) {
+    this.filterType = "highpass";
+    this.filterFreq = frequency;
+    this.filterQ = q;
+    return this;
+  }
+
+  public lpf(frequency: number, q: number = 1) {
+    this.filterType = "lowpass";
+    this.filterFreq = frequency;
+    this.filterQ = q;
     return this;
   }
 
@@ -55,10 +72,20 @@ class Synth {
   public play(time: number) {
     this.notes?.forEach((frequency, i) => {
       if (frequency === 0) return; // Skip silent notes
-      const { ctx, duration, waveform, noteOffsets, adsr } = this;
+      const {
+        ctx,
+        duration,
+        waveform,
+        noteOffsets,
+        adsr,
+        filterFreq,
+        filterType,
+        filterQ,
+      } = this;
       const offset = Array.isArray(noteOffsets) ? noteOffsets[i] : noteOffsets;
       const t = time + offset * i;
       const totalVoices = 1.5;
+
       beep({
         ctx,
         waveform,
@@ -67,6 +94,14 @@ class Synth {
         time: t,
         adsr,
         totalVoices,
+        filter:
+          filterFreq && filterType
+            ? {
+                type: filterType,
+                frequency: filterFreq,
+                Q: filterQ,
+              }
+            : undefined,
       });
     });
   }

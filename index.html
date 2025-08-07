@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>Drome REPL</title>
   </head>
   <body>
     <div class="header">
-      <div class="title">🎵 Audio Synth REPL</div>
+      <div class="title">🎵 Drome REPL</div>
       <div class="controls">
         <div class="status">
           <div class="status-dot" id="statusDot"></div>
@@ -71,7 +71,8 @@ drome.synth('sawtooth').note([36, 0, 43, 0])
           <div class="example">
             <div class="example-title">🌊 Bass Line</div>
             <div class="example-code">
-              drome.synth("sawtooth").note([36, 0, 43, 0])
+              drome.synth("triangle").note([60, 64, 67]).euclid(5,8)
+              drome.synth("sawtooth").note([48,52,45]).euclid(3,4).lpf(400)
             </div>
           </div>
 
