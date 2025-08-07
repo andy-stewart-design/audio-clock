@@ -1,6 +1,7 @@
 import { beep } from "./beep";
 import type { AudioClock } from "./clock";
 import { euclid } from "./euclid";
+import { midiToFreq } from "./midi";
 
 class Synth {
   private ctx: AudioContext;
@@ -10,13 +11,15 @@ class Synth {
   private waveform: OscillatorType = "sine";
   private adsr = { attack: 0.01, decay: 0.2, sustain: 0.0, release: 0.1 };
 
-  constructor(clock: AudioClock) {
+  constructor(clock: AudioClock, type: OscillatorType = "sine") {
     this.ctx = clock.ctx;
     this.duration = clock.duration;
+    this.waveform = type;
   }
 
   public note(n: number | number[]) {
-    this.notes = Array.isArray(n) ? n : [n];
+    const midiArray = Array.isArray(n) ? n : [n];
+    this.notes = midiArray.map((n) => midiToFreq(n));
     this.noteOffsets = this.duration / this.notes.length;
     return this;
   }

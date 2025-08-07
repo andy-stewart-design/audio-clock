@@ -61,8 +61,8 @@ export class AudioClock {
     else this.instruments.push(inst);
   }
 
-  public synth() {
-    const synth = new Synth(this);
+  public synth(type: OscillatorType = "sine") {
+    const synth = new Synth(this, type);
     this.addInstruments(synth);
     return synth;
   }
