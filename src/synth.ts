@@ -3,13 +3,20 @@ import type { AudioClock } from "./clock";
 import { euclid } from "./euclid";
 import { midiToFreq } from "./midi";
 
+interface ADSRSetter {
+  a: number;
+  d: number;
+  s: number;
+  r: number;
+}
+
 class Synth {
   private ctx: AudioContext;
   private duration: number;
   private notes: number[] = [261.63];
   private noteOffsets: number | number[] = 0;
   private waveform: OscillatorType = "sine";
-  private adsr = { attack: 0.01, decay: 0.2, sustain: 0.0, release: 0.1 };
+  private _adsr = { attack: 0.01, decay: 0.2, sustain: 0.0, release: 0.1 };
   private filterType: BiquadFilterType | null = null;
   private filterFreq: number | null = null;
   private filterQ: number = 1;
@@ -30,6 +37,30 @@ class Synth {
   public sound(s: OscillatorType) {
     this.waveform = s;
     return this;
+  }
+
+  public adsr({ a, d, s, r }: Partial<ADSRSetter>) {
+    if (a) this._adsr.attack = a;
+    if (d) this._adsr.decay = d;
+    if (s) this._adsr.sustain = s;
+    if (r) this._adsr.release = r;
+    return this;
+  }
+
+  public att(n: number) {
+    this._adsr.attack = n;
+  }
+
+  public dec(n: number) {
+    this._adsr.decay = n;
+  }
+
+  public sus(n: number) {
+    this._adsr.sustain = n;
+  }
+
+  public rel(n: number) {
+    this._adsr.release = n;
   }
 
   public hpf(frequency: number, q: number = 1) {
@@ -77,7 +108,7 @@ class Synth {
         duration,
         waveform,
         noteOffsets,
-        adsr,
+        _adsr: adsr,
         filterFreq,
         filterType,
         filterQ,

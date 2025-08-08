@@ -69,7 +69,7 @@ drome.synth('sawtooth').note([36, 0, 43, 0])
           </div>
 
           <div class="example">
-            <div class="example-title">🌊 Bass Line</div>
+            <div class="example-title">🌊 Bass + Lead</div>
             <div class="example-code">
               drome.synth("triangle").note([60, 64, 67]).euclid(5,8)
               drome.synth("sawtooth").note([48,52,45]).euclid(3,4).lpf(400)
@@ -79,14 +79,16 @@ drome.synth('sawtooth').note([36, 0, 43, 0])
           <div class="example">
             <div class="example-title">⚡ Lead Melody</div>
             <div class="example-code">
-              drome.synth("square").note([72, 74, 76, 77]).fast(2)
+              drome.synth("square").note([72, 74, 76, 77]).lpf(1000).fast(2)
             </div>
           </div>
 
           <div class="example">
             <div class="example-title">🥁 Kick Pattern</div>
             <div class="example-code">
-              drome.synth("square").note(36).euclid(4, 16)
+              drome.synth("square").note(36).euclid(4, 16).lpf(400).adsr({ a: 0,d: 0.2 }) 
+              
+              drome.synth("sine").note(36).euclid(4,16).lpf(800).adsr({ a: 0, d: 0.1 })
             </div>
           </div>
 
@@ -94,31 +96,6 @@ drome.synth('sawtooth').note([36, 0, 43, 0])
             <div class="example-title">🎵 Arpeggio</div>
             <div class="example-code">
               drome.synth().note([60, 64, 67, 72]).fast(4)
-            </div>
-          </div>
-
-          <div class="example">
-            <div class="example-title">🎪 Full Track</div>
-            <div class="example-code">
-              // Bass drome.synth("sawtooth").note([36, 0, 43, 0]) // Chords
-              drome.synth().note([60, 64, 67]).euclid(3, 8) // Lead
-              drome.synth("square").note([84, 86, 88]).fast(3)
-            </div>
-          </div>
-
-          <div class="example">
-            <div class="example-title">🔧 Tempo Control</div>
-            <div class="example-code">
-              // Slow down drome.setDuration(d => d * 2) // Speed up
-              drome.setDuration(d => d * 0.5)
-            </div>
-          </div>
-
-          <div class="example">
-            <div class="example-title">🎛️ Clear & Reset</div>
-            <div class="example-code">
-              // Clear all instruments drome.instruments = [] // Reset to
-              default tempo drome.setDuration(d => 0.5)
             </div>
           </div>
         </div>

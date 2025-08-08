@@ -23,10 +23,10 @@ interface BeepOptions {
 }
 
 const defaultAdsr = {
-  attack: 0.0,
+  attack: 0.01,
   decay: 0.2,
   sustain: 0.0,
-  release: 0.0,
+  release: 0.1,
 };
 
 function beep({
@@ -43,8 +43,6 @@ function beep({
 
   const o = ctx.createOscillator();
   const g = ctx.createGain();
-
-  // Create filter if specified
   const f = filter ? ctx.createBiquadFilter() : null;
 
   if (f && filter) {
@@ -64,54 +62,24 @@ function beep({
   const maxVolume = 1 / totalVoices;
   const sustainLevel = maxVolume * adsr.sustain;
 
+  const minDuration = adsr.attack + adsr.decay + adsr.release;
+  const scale = duration < minDuration ? duration / minDuration : 1;
+
   // Calculate time points
-  const attackEnd = t + adsr.attack;
-  const decayEnd = attackEnd + adsr.decay;
-  const sustainEnd = t + duration - adsr.release;
+  const attackEnd = t + adsr.attack * scale;
+  const decayEnd = attackEnd + adsr.decay * scale;
+  const sustainEnd = t + duration - adsr.release * scale;
   const releaseEnd = t + duration;
 
-  // Ensure we don't have overlapping phases for short durations
-  const minDuration = adsr.attack + adsr.decay + adsr.release;
-  if (duration < minDuration) {
-    // For very short notes, scale down the envelope proportionally
-    const scale = duration / minDuration;
-    const scaledAttack = adsr.attack * scale;
-    const scaledDecay = adsr.decay * scale;
-    const scaledRelease = adsr.release * scale;
-
-    const scaledAttackEnd = t + scaledAttack;
-    const scaledDecayEnd = scaledAttackEnd + scaledDecay;
-    const scaledSustainEnd = t + duration - scaledRelease;
-
-    // Attack
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(maxVolume, scaledAttackEnd);
-
-    // Decay
-    if (scaledDecayEnd <= scaledSustainEnd) {
-      g.gain.linearRampToValueAtTime(sustainLevel, scaledDecayEnd);
-      // Sustain
-      g.gain.setValueAtTime(sustainLevel, scaledSustainEnd);
-    }
-
-    // Release
-    g.gain.linearRampToValueAtTime(0, releaseEnd);
-  } else {
-    // Normal ADSR envelope for longer notes
-
-    // Attack phase
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(maxVolume, attackEnd);
-
-    // Decay phase
-    g.gain.linearRampToValueAtTime(sustainLevel, decayEnd);
-
-    // Sustain phase
-    g.gain.setValueAtTime(sustainLevel, sustainEnd);
-
-    // Release phase
-    g.gain.linearRampToValueAtTime(0, releaseEnd);
-  }
+  g.gain.setValueAtTime(0, t);
+  // Attack
+  g.gain.linearRampToValueAtTime(maxVolume, attackEnd);
+  // Decay
+  g.gain.linearRampToValueAtTime(sustainLevel, decayEnd);
+  // Sustain
+  g.gain.setValueAtTime(sustainLevel, sustainEnd);
+  // Release
+  g.gain.linearRampToValueAtTime(0, releaseEnd);
 
   // Connect the audio chain
   if (f) {
