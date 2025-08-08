@@ -86,8 +86,11 @@ function insertExample(e: MouseEvent) {
     const code = e.currentTarget
       .querySelector(".example-code")
       ?.textContent?.trim();
-    if (code) codeEditor.value = code;
-    codeEditor.focus();
+    if (code) {
+      codeEditor.value = code;
+      codeEditor.focus();
+      playCode();
+    }
   }
 }
 

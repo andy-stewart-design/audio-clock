@@ -72,7 +72,7 @@ drome.synth('sawtooth').note([36, 0, 43, 0])
             <div class="example-title">🌊 Bass + Lead</div>
             <div class="example-code">
               drome.synth("triangle").note([60, 64, 67]).euclid(5,8)
-              drome.synth("sawtooth").note([48,52,45]).euclid(3,4).lpf(400)
+              drome.synth("sawtooth").note([48,52,45]).euclid(3,4).lpf(400).adsr({ a: 0.25 })
             </div>
           </div>
 
