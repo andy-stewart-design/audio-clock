@@ -1,11 +1,12 @@
-// drome.synth().note(60).adsr(0.25, 0, 0).euclid(4, 4);
-// drome.synth("sawtooth", 8).note(48).euclid(3, 8).dec(0.5).sus(0.2);
+// const struct = drome.stretch([1, 0], 4);
+// drome.synth().struct(struct).adsr(0, 0.2);
 
 import { beep } from "./beep";
-import type { AudioClock } from "./clock";
 import { euclid } from "./utils/euclid";
 import { hex } from "./utils/hex";
 import { midiToFreq } from "./utils/midi";
+import type { AudioClock } from "./clock";
+import DromeArray from "./drome-array";
 
 type OscType = Exclude<OscillatorType, "custom">;
 
@@ -120,10 +121,11 @@ class Synth {
     return this;
   }
 
-  public struct(pattern: (0 | 1)[]) {
-    this.noteOffsets = this.duration / pattern.length;
+  public struct(pattern: number[] | DromeArray) {
+    const pat = pattern instanceof DromeArray ? pattern.value : pattern;
+    this.noteOffsets = this.duration / pat.length;
     let noteIndex = 0;
-    this.notes = pattern.map((p) => {
+    this.notes = pat.map((p) => {
       return p === 0 ? 0 : this.notes[noteIndex++ % this.notes.length];
     });
     return this;

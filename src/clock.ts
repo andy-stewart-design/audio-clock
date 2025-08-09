@@ -1,3 +1,4 @@
+import DromeArray from "./drome-array";
 import Synth from "./synth";
 
 type IterationCallback = (n: number) => void;
@@ -85,6 +86,14 @@ export class AudioClock {
     const synth = new Synth(this, type, harmonics);
     this.addInstruments(synth);
     return synth;
+  }
+
+  public euclid(pulses: number, steps: number, rotation = 0) {
+    return new DromeArray().euclid(pulses, steps, rotation);
+  }
+
+  public stretch(arr: number[], stretchFactor: number) {
+    return new DromeArray(arr).stretch(stretchFactor);
   }
 
   get duration() {

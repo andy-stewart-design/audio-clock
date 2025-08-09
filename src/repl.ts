@@ -15,8 +15,6 @@ function initializeREPL() {
 
   // Keyboard shortcuts
   codeEditor.addEventListener("keydown", (e) => {
-    console.log(e.key);
-
     if (e.altKey && e.key === "Enter") {
       e.preventDefault();
       play();
