@@ -16,7 +16,7 @@ class Synth {
   private waveform: OscType = "sine";
   private harmonics: number | null = null;
   private _gain = 1;
-  private _adsr = { attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.01 };
+  private _adsr = { attack: 0.001, decay: 0.001, sustain: 1.0, release: 0.001 };
   private filterType: BiquadFilterType | null = null;
   private filterFreq: number | null = null;
   private filterQ: number = 1;
@@ -46,10 +46,10 @@ class Synth {
   }
 
   public adsr(a: number, d?: number, s?: number, r?: number) {
-    this._adsr.attack = a || 0.01;
-    this._adsr.decay = d || 0.01;
+    this._adsr.attack = a || 0.001;
+    this._adsr.decay = d || 0.001;
     this._adsr.sustain = s || 0;
-    this._adsr.release = r || 0.01;
+    this._adsr.release = r || 0.001;
     return this;
   }
 
