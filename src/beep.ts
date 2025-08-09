@@ -1,4 +1,4 @@
-import { createPeriodicWave } from "./create-periodic-wave";
+import { createPeriodicWave } from "./utils/create-periodic-wave";
 
 interface ADSRParams {
   attack: number;

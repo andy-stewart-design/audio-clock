@@ -3,8 +3,9 @@
 
 import { beep } from "./beep";
 import type { AudioClock } from "./clock";
-import { euclid } from "./euclid";
-import { midiToFreq } from "./midi";
+import { euclid } from "./utils/euclid";
+import { hex } from "./utils/hex";
+import { midiToFreq } from "./utils/midi";
 
 type OscType = Exclude<OscillatorType, "custom">;
 
@@ -99,14 +100,32 @@ class Synth {
 
   public euclid(pulses: number, steps: number, rotation = 0) {
     const pattern = euclid(pulses, steps, rotation);
-    const totalNotes = steps;
-    this.noteOffsets = this.duration / totalNotes;
+    this.noteOffsets = this.duration / steps;
 
     let noteIndex = 0;
     this.notes = pattern.map((p) => {
       return p === 0 ? 0 : this.notes[noteIndex++ % this.notes.length];
     });
 
+    return this;
+  }
+
+  public hex(hexNotation: string | number) {
+    const pattern = hex(hexNotation);
+    this.noteOffsets = this.duration / pattern.length;
+    let noteIndex = 0;
+    this.notes = pattern.map((p) => {
+      return p === 0 ? 0 : this.notes[noteIndex++ % this.notes.length];
+    });
+    return this;
+  }
+
+  public struct(pattern: (0 | 1)[]) {
+    this.noteOffsets = this.duration / pattern.length;
+    let noteIndex = 0;
+    this.notes = pattern.map((p) => {
+      return p === 0 ? 0 : this.notes[noteIndex++ % this.notes.length];
+    });
     return this;
   }
 

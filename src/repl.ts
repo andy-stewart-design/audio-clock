@@ -1,7 +1,7 @@
 import { beep } from "./beep";
 import { AudioClock } from "./clock";
-import { euclid } from "./euclid";
-import { midiToFreq } from "./midi";
+import { euclid } from "./utils/euclid";
+import { midiToFreq } from "./utils/midi";
 import Synth from "./synth";
 
 // Global variables and functions
@@ -15,12 +15,14 @@ function initializeREPL() {
 
   // Keyboard shortcuts
   codeEditor.addEventListener("keydown", (e) => {
-    if (e.ctrlKey && e.key === "Enter") {
+    console.log(e.key);
+
+    if (e.altKey && e.key === "Enter") {
       e.preventDefault();
-      playCode();
-    } else if (e.shiftKey && e.key === "Enter") {
+      play();
+    } else if (e.altKey && e.key === "≥") {
       e.preventDefault();
-      runCode();
+      stop();
     }
   });
 
@@ -74,11 +76,13 @@ function runCode() {
   }
 }
 
-function playCode() {
+function play() {
   runCode();
-  drome.start();
-  updateStatus(true);
-  log(`▶ Starting playback loop...`, "output");
+  if (drome.paused) {
+    drome.start();
+    updateStatus(true);
+    log(`▶ Starting playback loop...`, "output");
+  }
 }
 
 function insertExample(e: MouseEvent) {
@@ -91,12 +95,12 @@ function insertExample(e: MouseEvent) {
     if (code) {
       codeEditor.value = code;
       codeEditor.focus();
-      playCode();
+      play();
     }
   }
 }
 
-function stopAll() {
+function stop() {
   drome.stop();
   drome.clearInstruments();
   updateStatus(false);
@@ -116,8 +120,8 @@ function updateStatus(playing: boolean) {
   }
 }
 
-document.querySelector("#stop")?.addEventListener("click", stopAll);
-document.querySelector("#play")?.addEventListener("click", playCode);
+document.querySelector("#stop")?.addEventListener("click", stop);
+document.querySelector("#play")?.addEventListener("click", play);
 document.querySelectorAll<HTMLDivElement>(".example")?.forEach((div) => {
   div.addEventListener("click", insertExample);
 });
