@@ -1,3 +1,5 @@
+import { createPeriodicWave } from "./create-periodic-wave";
+
 interface ADSRParams {
   attack: number;
   decay: number;
@@ -14,11 +16,12 @@ interface FilterParams {
 interface BeepOptions {
   ctx: AudioContext;
   time: number;
-  waveform?: OscillatorType;
+  waveform?: Exclude<OscillatorType, "custom">;
+  harmonics?: number | null;
   frequency?: number;
   duration?: number;
   adsr?: ADSRParams;
-  totalVoices?: number;
+  gain?: number;
   filter?: FilterParams;
 }
 
@@ -33,10 +36,11 @@ function beep({
   ctx,
   time,
   waveform = "sine",
+  harmonics = null,
   frequency: freq = 330,
   duration = 0.5,
   adsr = defaultAdsr,
-  totalVoices = 1,
+  gain = 1,
   filter,
 }: BeepOptions) {
   const t = time + 0.01;
@@ -54,12 +58,15 @@ function beep({
   }
 
   o.frequency.value = freq;
-  o.type = waveform;
+  if (!harmonics || waveform === "sine") o.type = waveform;
+  else o.setPeriodicWave(createPeriodicWave(ctx, waveform, harmonics));
+
   o.start(t);
   o.stop(t + duration);
 
   // ADSR Envelope
-  const maxVolume = 1 / totalVoices;
+  const baseVolume = 0.15;
+  const maxVolume = gain * baseVolume;
   const sustainLevel = maxVolume * adsr.sustain;
 
   const minDuration = adsr.attack + adsr.decay + adsr.release;

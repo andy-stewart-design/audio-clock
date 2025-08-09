@@ -86,6 +86,8 @@ function insertExample(e: MouseEvent) {
     const code = e.currentTarget
       .querySelector(".example-code")
       ?.textContent?.trim();
+    console.log({ code });
+
     if (code) {
       codeEditor.value = code;
       codeEditor.focus();

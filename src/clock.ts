@@ -78,8 +78,11 @@ export class AudioClock {
     this.iterationCallbacks.push(cb);
   }
 
-  public synth(type: OscillatorType = "sine") {
-    const synth = new Synth(this, type);
+  public synth(
+    type: Exclude<OscillatorType, "custom"> = "sine",
+    harmonics?: number
+  ) {
+    const synth = new Synth(this, type, harmonics);
     this.addInstruments(synth);
     return synth;
   }

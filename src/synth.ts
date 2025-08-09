@@ -1,30 +1,31 @@
+// drome.synth().note(60).adsr(0.25, 0, 0).euclid(4, 4);
+// drome.synth("sawtooth", 8).note(48).euclid(3, 8).dec(0.5).sus(0.2);
+
 import { beep } from "./beep";
 import type { AudioClock } from "./clock";
 import { euclid } from "./euclid";
 import { midiToFreq } from "./midi";
 
-interface ADSRSetter {
-  a: number;
-  d: number;
-  s: number;
-  r: number;
-}
+type OscType = Exclude<OscillatorType, "custom">;
 
 class Synth {
   private ctx: AudioContext;
   private duration: number;
   private notes: number[] = [261.63];
   private noteOffsets: number | number[] = 0;
-  private waveform: OscillatorType = "sine";
-  private _adsr = { attack: 0.01, decay: 0.2, sustain: 0.0, release: 0.1 };
+  private waveform: OscType = "sine";
+  private harmonics: number | null = null;
+  private _gain = 1;
+  private _adsr = { attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.01 };
   private filterType: BiquadFilterType | null = null;
   private filterFreq: number | null = null;
   private filterQ: number = 1;
 
-  constructor(clock: AudioClock, type: OscillatorType = "sine") {
+  constructor(clock: AudioClock, type: OscType = "sine", harmonics?: number) {
     this.ctx = clock.ctx;
     this.duration = clock.duration;
     this.waveform = type;
+    if (harmonics) this.harmonics = harmonics;
   }
 
   public note(n: number | number[]) {
@@ -34,33 +35,42 @@ class Synth {
     return this;
   }
 
-  public sound(s: OscillatorType) {
-    this.waveform = s;
+  public sound(type: OscType, harmonics?: number) {
+    this.waveform = type;
+    if (harmonics) this.harmonics = harmonics;
     return this;
   }
 
-  public adsr({ a, d, s, r }: Partial<ADSRSetter>) {
-    if (a) this._adsr.attack = a;
-    if (d) this._adsr.decay = d;
-    if (s) this._adsr.sustain = s;
-    if (r) this._adsr.release = r;
+  public gain(n: number) {
+    this._gain = n;
+  }
+
+  public adsr(a: number, d?: number, s?: number, r?: number) {
+    this._adsr.attack = a || 0.01;
+    this._adsr.decay = d || 0.01;
+    this._adsr.sustain = s || 0;
+    this._adsr.release = r || 0.01;
     return this;
   }
 
   public att(n: number) {
-    this._adsr.attack = n;
+    this._adsr.attack = n || 0.01;
+    return this;
   }
 
   public dec(n: number) {
-    this._adsr.decay = n;
+    this._adsr.decay = n || 0.01;
+    return this;
   }
 
   public sus(n: number) {
-    this._adsr.sustain = n;
+    this._adsr.sustain = n || 0.01;
+    return this;
   }
 
   public rel(n: number) {
-    this._adsr.release = n;
+    this._adsr.release = n || 0.01;
+    return this;
   }
 
   public hpf(frequency: number, q: number = 1) {
@@ -107,7 +117,9 @@ class Synth {
         ctx,
         duration,
         waveform,
+        harmonics,
         noteOffsets,
+        _gain: gain,
         _adsr: adsr,
         filterFreq,
         filterType,
@@ -115,16 +127,16 @@ class Synth {
       } = this;
       const offset = Array.isArray(noteOffsets) ? noteOffsets[i] : noteOffsets;
       const t = time + offset * i;
-      const totalVoices = 1.5;
 
       beep({
         ctx,
         waveform,
+        harmonics,
         duration,
         frequency,
         time: t,
         adsr,
-        totalVoices,
+        gain,
         filter:
           filterFreq && filterType
             ? {
