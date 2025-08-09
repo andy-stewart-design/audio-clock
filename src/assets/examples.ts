@@ -6,9 +6,13 @@ drome.synth("sawtooth").note([43, 43, 43, 50, 43, 43, 53, 54])
   `drome.synth().note(60).adsr(0.25, 0.1, 0).euclid(4, 4).lpf(400).gain(1.25)
 
 drome.synth("sawtooth", 8).note(48).euclid(3, 8).dec(0.5).sus(0.2)`,
-  `const struct = drome.euclid(5,8).stretch(4);
-  
-drome.synth("sawtooth",12).struct(struct).adsr(0, 0.1);`,
+  `const struct = drome.euclid(5,8).stretch(4)
+
+drome.synth("sawtooth",12).struct(struct).adsr(0, 0.1)`,
 ];
 
 export { examples };
+
+// const notes = drome.range(44, 48);
+
+// drome.synth("sawtooth", 12).note(notes).adsr(0, 0.1);

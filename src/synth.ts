@@ -30,8 +30,9 @@ class Synth {
     if (harmonics) this.harmonics = harmonics;
   }
 
-  public note(n: number | number[]) {
-    const midiArray = Array.isArray(n) ? n : [n];
+  public note(n: number | number[] | DromeArray) {
+    const midiArray =
+      n instanceof DromeArray ? n.value : Array.isArray(n) ? n : [n];
     this.notes = midiArray.map((n) => midiToFreq(n));
     this.noteOffsets = this.duration / this.notes.length;
     return this;

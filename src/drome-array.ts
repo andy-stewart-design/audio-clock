@@ -1,4 +1,5 @@
 import { euclid } from "./utils/euclid";
+import { range } from "./utils/range";
 
 class DromeArray {
   private _value: number[];
@@ -10,6 +11,11 @@ class DromeArray {
   public euclid(pulses: number, steps: number, rotation = 0) {
     this._value = euclid(pulses, steps, rotation);
     return this;
+  }
+
+  public range(start: number, end?: number, stepOrIncl: number | boolean = 1) {
+    this._value = range(start, end, stepOrIncl);
+    return this._value;
   }
 
   public stretch(n: number) {
